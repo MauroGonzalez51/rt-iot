@@ -1,0 +1,85 @@
+\section{Comprensión de los Datos}
+
+Esta fase del proyecto se centra en la adquisición y el análisis preliminar del
+conjunto de datos RT-IoT2022. El objetivo es familiarizarse con la estructura
+de la información, identificar la naturaleza de los atributos disponibles y
+detectar patrones iniciales mediante un análisis exploratorio focalizado.
+
+\subsection{Descripción del dataset RT-IoT2022}
+
+El conjunto de datos utilizado, denominado RT-IoT2022, proviene de un entorno
+de pruebas controlado (testbed) diseñado para simular escenarios de
+ciberseguridad en tiempo real sobre infraestructuras de Internet de las Cosas.
+
+La captura del tráfico de red se realizó utilizando herramientas de análisis de
+paquetes como Wireshark, registrando la interacción entre dispositivos IoT
+(víctimas) y la infraestructura atacante. Posteriormente, para transformar los
+paquetes crudos en datos tabulares aptos para el aprendizaje automático, se
+emplearon extractores de características de flujo de red como Zeek y
+CICFlowmeter. Esto permite representar las comunicaciones no como paquetes
+aislados, sino como flujos bidireccionales con atributos estadísticos
+definidos.
+
+\subsection{Variables incluidas}
+
+El dataset se compone de una variedad de características que describen el
+comportamiento de los flujos de red. Estas variables pueden categorizarse en
+los siguientes grupos:
+
+\begin{itemize}
+    \item \textbf{Identificadores de flujo:} Direcciones IP de origen y destino, y puertos de servicio (aunque estos suelen ser eliminados para evitar sesgos hacia direcciones específicas).
+    \item \textbf{Protocolos:} Información sobre el protocolo de capa de transporte (TCP, UDP) y servicios de aplicación.
+    \item \textbf{Estadísticas de volumen:} Contadores de paquetes enviados y recibidos, así como la longitud de los bytes transferidos (Payload).
+    \item \textbf{Tiempos:} Duración del flujo y tiempos de llegada entre paquetes (IAT $-$ Inter-Arrival Times), cruciales para detectar anomalías temporales.
+    \item \textbf{Flags TCP:} Indicadores de estado de la conexión (SYN, FIN, RST, ACK), fundamentales para identificar escaneos y ataques de denegación de servicio.
+    \item \textbf{Variable objetivo (Target):} La columna \texttt{Attack\_type}, que etiqueta cada registro como tráfico normal o especifica la categoría del ataque (ej. DoS, Brute Force, MQTT, etc.).
+\end{itemize}
+
+\subsection{Volumen y estructura}
+
+El conjunto de datos se proporciona dividido en dos archivos principales: un
+conjunto de entrenamiento (\texttt{train\_data.csv}) y un conjunto de prueba
+(\texttt{test\_data.csv}). Esta separación previa facilita la validación de los
+modelos y asegura que no haya fuga de información durante la fase de
+entrenamiento.
+
+La estructura es tabular, donde cada fila representa un flujo de red único y
+las columnas corresponden a las características extraídas mencionadas
+anteriormente. Se verificó la consistencia estructural entre ambos archivos,
+asegurando que el número y tipo de columnas fuesen idénticos antes de proceder
+con el análisis.
+
+\subsection{Análisis exploratorio (EDA)}
+
+Dado que los datos provienen de extractores de flujo automatizados, el análisis
+exploratorio se centró principalmente en examinar las relaciones lineales entre
+las variables numéricas para identificar redundancia.
+
+Se generó una matriz de correlación utilizando el coeficiente de Pearson para
+cuantificar la relación lineal entre los pares de atributos numéricos (tipos
+\texttt{Int32}, \texttt{Int64}, \texttt{Float32}, \texttt{Float64}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/correlation_matrix.png}
+    \caption{Mapa de calor de la matriz de correlación de las características numéricas.}\label{fig:correlation_matrix}
+\end{figure}
+
+Como se observa en la Figura~\ref{fig:correlation_matrix}, el análisis reveló
+la existencia de grupos de variables con una correlación extremadamente alta
+(superior a 0.95). Este fenómeno de multicolinealidad sugiere que varios
+atributos aportan información redundante al modelo (por ejemplo, contadores de
+paquetes que crecen linealmente con la duración del flujo). La identificación
+de estas correlaciones es un paso crítico que justifica la posterior reducción
+de dimensionalidad en la fase de preparación de datos.
+
+Cabe destacar que, en esta fase exploratoria, se prescindió de realizar pruebas
+formales de normalidad (como Shapiro-Wilk o Kolmogorov-Smirnov) y
+transformaciones para forzar una distribución gaussiana en las variables. Esta
+decisión se fundamenta en la elección posterior de algoritmos basados en
+árboles de decisión (como ExtraTrees y Random Forest), los cuales son métodos
+no paramétricos. A diferencia de modelos lineales o basados en distancia (como
+Regresión Logística o KNN), los árboles de decisión no asumen una distribución
+normal subyacente en los datos y son robustos frente a escalas dispares y
+distribuciones sesgadas, haciendo innecesaria una normalización estadística
+estricta en esta etapa.

@@ -1,0 +1,155 @@
+\documentclass[letterpaper, 12pt]{article}
+
+% ===== Idioma y codificación =====
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+% ===== Diseño y formato general =====
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{verbatim}
+\usepackage{chngcntr}
+\usepackage{tocloft}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+% ===== Matemáticas =====
+\usepackage{amsmath}
+
+% ===== Hipervínculos =====
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    urlcolor=cyan!70!black,
+    citecolor=magenta!70!black
+}
+
+% ===== Código fuente =====
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle, frame=single, framerule=0.5pt, rulecolor=\color{gray!60}}
+
+% ===== Citas y bibliografía =====
+\usepackage{csquotes}
+\usepackage[style=apa, maxnames=2, minnames=1, backend=biber, parentracker=true, sorting=none]{biblatex}
+\DefineBibliographyStrings{english}{
+      andothers = {\em et\addabbrvspace{} al\adddot{}\/}
+}
+\addbibresource{./Bibliography/bibliography.bib}
+
+% ===== Personalización de secciones y TOC =====
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\baselinestretch}{1.5}
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+
+% ===== Otros ajustes =====
+\setlength{\parskip}{0pt}
+\raggedbottom{}
+\counterwithin{figure}{section}
+\newcommand{\bolditalic}[1]{\textbf{\textit{#1}}}
+
+% ===== chktex =====
+% chktex-file 44
+% chktex-file 24
+% chktex-file 8
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.3\textwidth]{Images/logo_utb.png}
+    \par\vspace{.5cm}
+
+    {\scshape\LARGE Universidad Tecnológica de Bolívar \par}
+    \vspace{1cm}
+
+    {\scshape\Large Inteligencia Artificial \par}
+    \vspace{1.5cm}
+
+    \slshape {\Large \bfseries{}Detección de intrusiones RT-IoT2022\\}
+    \vspace{2.5cm}
+
+    \slshape {\itshape{} Mauro Alonso González Figueroa, T00067622 \\}
+    \slshape {\itshape{} Juan Jose Jiménez Guardo, T00068278 \\}
+
+    \vfill
+    Revisado Por \\
+    Edwin Alexander Puertas Del Castillo\\
+    {\large \today\par}
+\end{titlepage}
+
+\tableofcontents{}
+\newpage
+
+\nocite{*}
+\input{Sections/context.tex}
+\input{Sections/eda.tex}
+\input{Sections/data-preparation.tex}
+\input{Sections/modeling.tex}
+\input{Sections/training.tex}
+\input{Sections/conclussions.tex}
+
+\newpage
+\section*{Referencias}
+\addcontentsline{toc}{section}{Referencias}
+
+\defbibheading{bibliography}{}
+\printbibliography{}
+
+\newpage
+\appendix
+\section{Anexos}
+
+\subsection{Repositorio de Código}
+
+El código fuente completo, incluyendo los notebooks de exploración,
+preprocesamiento y entrenamiento, así como los modelos serializados, se
+encuentra disponible en el siguiente repositorio de GitHub:
+
+\begin{center}
+    \url{https://github.com/MauroGonzalez51/rt-iot}
+\end{center}
+
+\vspace{1cm}
+
+\textbf{Nota sobre la reproducibilidad:}
+Para ejecutar los notebooks proporcionados, se recomienda utilizar un entorno virtual de Python 3.10+ e instalar las dependencias listadas en el archivo \texttt{requirements.txt} incluido en la raíz del repositorio.
+\end{document}

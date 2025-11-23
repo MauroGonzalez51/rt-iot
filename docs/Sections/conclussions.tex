@@ -1,0 +1,38 @@
+\section{Reflexión Final}
+
+Aunque el alcance de este proyecto es académico y no contempla un despliegue en
+producción industrial, el proceso de desarrollo ha permitido validar la
+viabilidad técnica de utilizar aprendizaje automático para la ciberseguridad en
+IoT.
+
+\subsection{Conclusiones}
+
+El proyecto ha logrado cumplir satisfactoriamente con el objetivo de
+desarrollar un clasificador robusto para el dataset RT-IoT2022. Se destacan los
+siguientes logros:
+
+\begin{itemize}
+    \item \textbf{Eficacia del Preprocesamiento:} La estrategia de eliminación de características altamente correlacionadas demostró ser crucial. Redujo la complejidad del modelo sin sacrificar información, permitiendo tiempos de entrenamiento muy bajos.
+    \item \textbf{Manejo del Desbalance:} La combinación de técnicas de \textit{Undersampling} y \textit{SMOTE} fue determinante para que el modelo aprendiera a identificar ataques minoritarios (como los de fuerza bruta SSH) que, de otro modo, habrían sido ignorados por el algoritmo.
+    \item \textbf{Selección del Modelo Óptimo:} Se identificó al \textbf{Extra Trees Classifier} como la mejor opción. Su equilibrio entre precisión perfecta (F1-Score $\approx$ 1.0) y velocidad de inferencia lo convierte en un candidato ideal para sistemas embebidos.
+\end{itemize}
+
+\subsection{Recomendaciones}
+
+Basado en los hallazgos experimentales, se sugieren las siguientes
+recomendaciones para futuras iteraciones:
+
+\begin{itemize}
+    \item \textbf{Validación en Escenarios Reales:} Los resultados perfectos (100\% de exactitud) suelen ser indicativos de un entorno controlado. Se recomienda probar el modelo con tráfico capturado en una red IoT real y ruidosa para evaluar su robustez frente a datos no vistos.
+    \item \textbf{Optimización de Hiperparámetros:} Aunque los parámetros por defecto funcionaron bien, una búsqueda exhaustiva (\textit{GridSearch}) podría reducir aún más el tamaño del modelo (número de árboles o profundidad) para ahorrar memoria en dispositivos pequeños.
+\end{itemize}
+
+\subsection{Trabajo futuro}
+
+Como líneas de investigación futura, se propone:
+
+\begin{enumerate}
+    \item \textbf{Implementación en Edge:} Desplegar el modelo entrenado (exportado como \texttt{.joblib}) en una Raspberry Pi o un dispositivo similar para medir la latencia de clasificación en tiempo real.
+    \item \textbf{Detección de Anomalías (No Supervisado):} Complementar este clasificador supervisado con modelos no supervisados (como \textit{Isolation Forest}) para detectar ataques de ``día cero'' que no estén etiquetados en el dataset actual.
+    \item \textbf{Exploración de Deep Learning:} Evaluar si redes neuronales ligeras (como 1D-CNNs) pueden ofrecer ventajas en la extracción automática de características complejas sin necesidad de ingeniería manual.
+\end{enumerate}

@@ -10,3 +10,15 @@ wheels/
 .venv
 
 typings/
+
+docs/*.aux
+docs/*.bcf*
+docs/*.fdb_latexmk
+docs/*.fls
+docs/*.log
+docs/*.out
+docs/*.run.xml
+docs/*.synctex.gz*
+docs/*.toc
+docs/*.bbl
+docs/*.blg

@@ -1,0 +1,115 @@
+% chktex-file 44
+
+\section{Modelado}
+
+En esta fase se procedió a la construcción y configuración de las arquitecturas
+de aprendizaje automático. El enfoque se centró en seleccionar algoritmos
+capaces de manejar la alta dimensionalidad del tráfico de red y ofrecer tiempos
+de respuesta compatibles con los requisitos de latencia de un entorno IoT.
+
+\subsection{Algoritmos seleccionados}
+
+Para la selección inicial de los candidatos, se planteó una estrategia de
+\textit{AutoML} (Automated Machine Learning) para comparar múltiples familias
+de algoritmos simultáneamente.
+
+Inicialmente, se intentó implementar la librería \texttt{PyCaret}, reconocida
+por su robustez en flujos de trabajo de ciencia de datos. Sin embargo, debido a
+conflictos irresolubles de versionado y dependencias incompatibles con el
+entorno de ejecución actual, se optó por utilizar la librería
+\texttt{LazyPredict}. Esta herramienta permitió realizar un barrido exhaustivo
+de más de 30 algoritmos de clasificación supervisada sin requerir una
+configuración manual extensa en la etapa exploratoria.
+
+Tras la ejecución sobre el conjunto de entrenamiento balanceado, se aplicó un
+filtro estricto: solo se consideraron aquellos modelos cuyo \texttt{Balanced
+    Accuracy} superara el 90\%. Los algoritmos seleccionados para la fase final
+fueron:
+
+\begin{itemize}
+    \item \textbf{Extra Trees Classifier} (Extremely Randomized Trees).
+    \item \textbf{XGBoost Classifier} (Extreme Gradient Boosting).
+    \item \textbf{Random Forest Classifier}.
+    \item \textbf{Bagging Classifier}.
+\end{itemize}
+
+\subsection{Justificación de los modelos}
+
+La selección final muestra una clara predominancia de los métodos de ensamble
+(\textit{Ensemble Methods}). Esta elección se justifica por tres factores
+críticos en el contexto de la ciberseguridad IoT:\@{}
+
+\begin{enumerate}
+    \item \textbf{Manejo de la Varianza:} Los ataques de red pueden presentar
+          patrones sutiles y ruidosos. Los modelos basados en árboles individuales
+          tienden al sobreajuste (\textit{overfitting}). Al utilizar ensambles (ya sea
+          por \textit{Bagging} como en Random Forest/ExtraTrees o \textit{Boosting}
+          como en XGBoost), se reduce la varianza y se mejora la capacidad de
+          generalización frente a nuevas amenazas.
+
+    \item \textbf{Interpretabilidad Intrínseca:} Aunque son modelos complejos,
+          los algoritmos basados en árboles permiten extraer la ``importancia de las
+          características'' (\textit{Feature Importance}). Esto es vital para entender
+          qué atributos del paquete de red (puertos, flags, tamaño) son determinantes
+          para clasificar un ataque.
+
+    \item \textbf{Eficiencia Computacional:} El algoritmo \texttt{ExtraTrees},
+          en particular, fue seleccionado por su velocidad. Al elegir los puntos de
+          corte de los nodos de manera aleatoria en lugar de buscar el óptimo (como
+          hace Random Forest), reduce drásticamente el costo computacional sin
+          sacrificar precisión, lo cual es ideal para dispositivos IoT con recursos
+          limitados.
+\end{enumerate}
+
+\subsection{Entrenamiento del modelo}
+
+El proceso de entrenamiento se llevó a cabo en un entorno local utilizando
+Python y la suite \texttt{scikit-learn}. Para garantizar la reproducibilidad de
+los experimentos y la robustez de los resultados, se definieron los siguientes
+parámetros y configuraciones:
+
+\begin{itemize}
+    \item \textbf{Hiperparámetros:} Se estandarizó el número de estimadores
+          (\texttt{n\_estimators=100}) para todos los modelos de ensamble,
+          permitiendo una comparación justa de su rendimiento base.
+    \item \textbf{Semilla Aleatoria:} Se fijó \texttt{random\_state=42} en
+          todas las inicializaciones estocásticas para asegurar que las particiones
+          de datos y las decisiones aleatorias de los árboles fueran deterministas
+          entre ejecuciones.
+    \item \textbf{Paralelismo:} Se configuró el parámetro \texttt{n\_jobs=-1}
+          para utilizar todos los núcleos disponibles del procesador, optimizando el
+          tiempo de entrenamiento dado el volumen de datos.
+    \item \textbf{Pipeline de Preprocesamiento:} Los modelos se entrenaron
+          utilizando los datos transformados por el pipeline de balanceo híbrido
+          (SMOTE + Undersampling) descrito en la sección anterior, asegurando que el
+          modelo no tuviera sesgos hacia la clase mayoritaria.
+\end{itemize}
+
+\subsection{Problemas encontrados}
+
+Durante la fase de modelado, se enfrentaron y mitigaron varios desafíos
+técnicos:
+
+\begin{itemize}
+    \item \textbf{Incompatibilidad de Software:} La integración inicial con
+          herramientas de AutoML complejas (\texttt{PyCaret}) generó conflictos con
+          las versiones de \texttt{scikit-learn} y \texttt{numpy}. Esto obligó a
+          migrar hacia \texttt{LazyPredict} y posteriormente a implementaciones puras
+          en \texttt{scikit-learn}, lo cual, paradójicamente, otorgó mayor control
+          sobre el proceso.
+
+    \item \textbf{Desbalance Extremo:} A pesar de las técnicas de muestreo,
+          algunas clases de ataques (como \texttt{Metasploit\_Brute\_Force\_SSH})
+          tenían tan pocas muestras originales que existía el riesgo de que el modelo
+          simplemente memorizara estos ejemplos (overfitting) en lugar de aprender el
+          patrón. Esto se mitigó validando estrictamente con la matriz de confusión
+          en el conjunto de test.
+
+    \item \textbf{Falsos Positivos en Clases Similares:} Se detectó una
+          dificultad inicial para distinguir entre tipos de escaneos de red (ej.
+          \texttt{NMAP\_UDP} vs \texttt{NMAP\_TCP}), dado que comparten muchas
+          características de flujo. Esto requirió confiar en la capacidad de los
+          modelos no lineales (árboles) para encontrar fronteras de decisión
+          complejas que una regresión lineal no podría hallar.
+\end{itemize}
+

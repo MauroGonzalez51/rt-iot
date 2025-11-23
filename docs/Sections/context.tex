@@ -1,0 +1,67 @@
+\section{Comprensión del Negocio}
+
+Esta sección establece el marco contextual del proyecto, definiendo la
+problemática actual en el ámbito del Internet de las Cosas (IoT), los objetivos
+planteados y los criterios mediante los cuales se evaluará el éxito de la
+solución propuesta.
+
+\subsection{Contexto general}
+
+El Internet de las Cosas (IoT) ha experimentado un crecimiento exponencial en
+la última década, integrándose en sectores críticos como la industria, la salud
+y las ciudades inteligentes. Sin embargo, esta proliferación de dispositivos
+conectados ha ampliado significativamente la superficie de ataque disponible
+para los ciberdelincuentes.
+
+A diferencia de los sistemas informáticos tradicionales, los dispositivos IoT
+suelen caracterizarse por tener recursos limitados de procesamiento y energía,
+lo que dificulta la implementación de mecanismos de seguridad robustos
+convencionales. Las vulnerabilidades comunes incluyen el uso de credenciales
+predeterminadas, falta de cifrado en las comunicaciones y firmware
+desactualizado.
+
+En este escenario, los sistemas de seguridad perimetral tradicionales (como
+firewalls básicos) resultan insuficientes. Surge entonces la necesidad crítica
+de implementar Sistemas de Detección de Intrusos (IDS) basados en el análisis
+de tráfico de red, capaces de monitorear el comportamiento de los dispositivos
+y alertar sobre actividades sospechosas en tiempo real.
+
+\subsection{Problema a resolver}
+
+El problema central que aborda este proyecto es la dificultad para distinguir,
+de manera automatizada y precisa, entre el comportamiento legítimo de un
+dispositivo IoT y las anomalías generadas por ciberataques.
+
+Específicamente, el desafío consiste en analizar flujos de tráfico de red
+complejos para realizar una clasificación multicategoría. No basta con una
+detección binaria (normal vs.~ataque); es necesario identificar la naturaleza
+específica de la intrusión (por ejemplo, ataques de denegación de servicio,
+escaneos de puertos o inyecciones de fuerza bruta) utilizando los datos
+proporcionados por el dataset RT-IoT2022.
+
+\subsection{Objetivo del proyecto}
+
+El objetivo principal de esta investigación es desarrollar, entrenar y validar
+un algoritmo de clasificación utilizando métodos de aprendizaje automático
+(Machine Learning). Este modelo debe ser capaz de procesar las características
+del tráfico de red contenidas en el dataset RT-IoT2022 para distinguir
+eficazmente entre tráfico normal y tráfico malicioso.
+
+Se busca obtener un modelo que no solo sea preciso, sino también eficiente,
+considerando las restricciones de latencia y recursos típicas de los entornos
+IoT.
+
+\subsection{Métricas de éxito}
+
+Para evaluar el desempeño y la viabilidad de los modelos propuestos, se
+utilizarán las siguientes métricas estándar en la industria de la
+ciberseguridad y la ciencia de datos:
+
+\begin{itemize}
+    \item \textbf{Accuracy (Exactitud):} Para medir el porcentaje global de predicciones correctas.
+    \item \textbf{Precision (Precisión):} Para evaluar la confiabilidad de las alertas de ataque generadas (minimización de falsos positivos).
+    \item \textbf{Recall (Sensibilidad):} Crucial en seguridad, para medir la capacidad del modelo de detectar la mayor cantidad posible de ataques reales (minimización de falsos negativos).
+    \item \textbf{F1-Score:} Como media armónica entre Precision y Recall, proporcionando una métrica balanceada, especialmente útil dado el posible desbalance de clases en los datos de ataques
+
+    \item \textbf{Matriz de Confusión:} Para visualizar detalladamente el desempeño del modelo en cada clase específica de ataque.
+\end{itemize}

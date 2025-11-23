@@ -1,0 +1,291 @@
+% chktex-file 44
+
+\section{Evaluación}
+
+En esta sección se presentan los resultados cuantitativos obtenidos tras la
+ejecución de los modelos seleccionados sobre el conjunto de prueba (Test Set).
+Se analiza el desempeño no solo desde una perspectiva global (Accuracy), sino
+detallando el comportamiento en cada clase de ataque para verificar la
+efectividad de la estrategia de balanceo de datos.
+
+\subsection{Métricas obtenidas}
+
+A continuación, se presenta un resumen comparativo del rendimiento global de
+los cuatro modelos finalistas. Dado que todos alcanzaron una exactitud cercana
+al 100\%, se incluyen métricas de eficiencia (tiempo de entrenamiento) como
+factor de desempate.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{|X|c|c|c|c|}
+        \hline
+        \rowcolor{black!10}
+        \textbf{Modelo}          & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{Tiempo (s)} & \textbf{Ranking} \\ \hline
+        Extra Trees Classifier   & 1.00              & 0.96              & \textbf{3.61}       & \textbf{1}       \\ \hline
+        XGBoost Classifier       & 1.00              & 0.97              & 8.45                & 2                \\ \hline
+        Bagging Classifier       & 1.00              & 0.96              & 10.12               & 3                \\ \hline
+        Random Forest Classifier & 1.00              & 0.97              & 12.24               & 4                \\ \hline
+    \end{tabularx}
+    \caption{Resumen comparativo de métricas y eficiencia.}\label{tab:model_comparison}
+\end{table}
+
+\subsection{Matriz de confusión y Reportes detallados}
+
+A continuación se detallan las matrices de confusión y los reportes de
+clasificación por clase para cada modelo, permitiendo observar la capacidad de
+detección en las clases minoritarias (resaltadas en azul en las tablas).
+
+% --------------------------------------------------------------------------------------------------------------------------------------
+% ExtraTreesClassifier
+% --------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection{Extra Trees Classifier}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Images/confusion_matrix__ExtraTreesClassifier.png}
+    \caption{Matriz de Confusión $-$ Extra Trees Classifier.}\label{fig:cm_extratrees}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+
+    \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+
+    \begin{tabularx}{\textwidth}{|c|R|R|R|R|}
+        \hline
+        \rowcolor{black!10}
+        \textbf{Clase}        & \textbf{Precision}                 & \textbf{Recall} & \textbf{F1-score} & \textbf{Support} \\ \hline
+
+        0                     & 0.98                               & 0.99            & 0.99              & 1488             \\ \hline
+        1                     & 0.89                               & 0.90            & 0.90              & 103              \\ \hline
+        2                     & 1.00                               & 1.00            & 1.00              & 18925            \\ \hline
+        3                     & 1.00                               & 1.00            & 1.00              & 861              \\ \hline
+
+        \rowcolor{blue!5}
+        4                     & 1.00                               & 0.67            & 0.80              & 12               \\ \hline
+
+        5                     & 0.83                               & 0.91            & 0.87              & 11               \\ \hline
+        6                     & 1.00                               & 1.00            & 1.00              & 390              \\ \hline
+        7                     & 1.00                               & 1.00            & 1.00              & 178              \\ \hline
+
+        \rowcolor{blue!5}
+        8                     & 0.97                               & 0.97            & 0.97              & 519              \\ \hline
+
+        9                     & 1.00                               & 1.00            & 1.00              & 411              \\ \hline
+        10                    & 0.99                               & 0.98            & 0.99              & 1672             \\ \hline
+
+        \rowcolor{blue!5}
+        11                    & 1.00                               & 0.93            & 0.96              & 54               \\ \hline
+
+        \rowcolor{black!5}
+        \textbf{Accuracy}     & \multicolumn{4}{c|}{\textbf{1.00}}                                                          \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Macro avg}    & 0.97                               & 0.95            & 0.96              & 24624            \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Weighted avg} & 1.00                               & 1.00            & 1.00              & 24624            \\ \hline
+
+    \end{tabularx}
+
+    \caption{Reporte de Clasificación — Extra Trees Classifier}
+\end{table}
+
+% --------------------------------------------------------------------------------------------------------------------------------------
+% XGBoost Classifier
+% --------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection{XGBoost Classifier}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Images/confusion_matrix__XGBClassifierr.png}
+    \caption{Matriz de Confusión $-$ XGBoost Classifier.}\label{fig:cm_xgb}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+
+    \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+
+    \begin{tabularx}{\textwidth}{|c|R|R|R|R|}
+        \hline
+        \rowcolor{black!10}
+        \textbf{Clase}        & \textbf{Precision}                 & \textbf{Recall} & \textbf{F1-score} & \textbf{Support} \\
+        \hline
+
+        0                     & 0.98                               & 0.99            & 0.98              & 1488             \\ \hline
+        1                     & 0.89                               & 0.94            & 0.92              & 103              \\ \hline
+        2                     & 1.00                               & 1.00            & 1.00              & 18925            \\ \hline
+        3                     & 1.00                               & 1.00            & 1.00              & 861              \\ \hline
+
+        \rowcolor{blue!5}
+        4                     & 1.00                               & 0.67            & 0.80              & 12               \\ \hline
+
+        5                     & 1.00                               & 0.91            & 0.95              & 11               \\ \hline
+        6                     & 1.00                               & 1.00            & 1.00              & 390              \\ \hline
+        7                     & 0.99                               & 1.00            & 0.99              & 178              \\ \hline
+
+        \rowcolor{blue!5}
+        8                     & 0.98                               & 0.98            & 0.98              & 519              \\ \hline
+
+        9                     & 1.00                               & 1.00            & 1.00              & 411              \\ \hline
+        10                    & 1.00                               & 0.98            & 0.99              & 1672             \\ \hline
+
+        \rowcolor{blue!5}
+        11                    & 1.00                               & 0.96            & 0.98              & 54               \\ \hline
+
+        \rowcolor{black!5}
+        \textbf{Accuracy}     & \multicolumn{4}{c|}{\textbf{1.00}}                                                          \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Macro avg}    & 0.99                               & 0.95            & 0.97              & 24624            \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Weighted avg} & 1.00                               & 1.00            & 1.00              & 24624            \\ \hline
+
+    \end{tabularx}
+
+    \caption{Reporte de Clasificación — XGB Classifier}
+\end{table}
+
+% --------------------------------------------------------------------------------------------------------------------------------------
+% Random Forest Classifier
+% --------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection{Random Forest Classifier}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Images/confusion_matrix__RandomForestClassifier.png}
+    \caption{Matriz de Confusión $-$ Random Forest Classifier.}\label{fig:cm_rfc}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+
+    \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+
+    \begin{tabularx}{\textwidth}{|c|R|R|R|R|}
+        \hline
+        \rowcolor{black!10}
+        \textbf{Clase}        & \textbf{Precision}                 & \textbf{Recall} & \textbf{F1-score} & \textbf{Support} \\
+        \hline
+
+        0                     & 0.98                               & 1.00            & 0.99              & 1488             \\ \hline
+        1                     & 0.87                               & 0.93            & 0.90              & 103              \\ \hline
+        2                     & 1.00                               & 1.00            & 1.00              & 18925            \\ \hline
+        3                     & 1.00                               & 1.00            & 1.00              & 861              \\ \hline
+
+        \rowcolor{blue!5}
+        4                     & 1.00                               & 0.67            & 0.80              & 12               \\ \hline
+
+        5                     & 1.00                               & 0.91            & 0.95              & 11               \\ \hline
+        6                     & 1.00                               & 1.00            & 1.00              & 390              \\ \hline
+        7                     & 1.00                               & 1.00            & 1.00              & 178              \\ \hline
+
+        \rowcolor{blue!5}
+        8                     & 0.98                               & 0.97            & 0.98              & 519              \\ \hline
+
+        9                     & 1.00                               & 1.00            & 1.00              & 411              \\ \hline
+        10                    & 1.00                               & 0.98            & 0.99              & 1672             \\ \hline
+
+        \rowcolor{blue!5}
+        11                    & 1.00                               & 0.96            & 0.98              & 54               \\ \hline
+
+        \rowcolor{black!5}
+        \textbf{Accuracy}     & \multicolumn{4}{c|}{\textbf{1.00}}                                                          \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Macro avg}    & 0.99                               & 0.95            & 0.97              & 24624            \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Weighted avg} & 1.00                               & 1.00            & 1.00              & 24624            \\ \hline
+
+    \end{tabularx}
+
+    \caption{Reporte de Clasificación — Random Forest Classifier}
+\end{table}
+
+% --------------------------------------------------------------------------------------------------------------------------------------
+% Bagging Classifier
+% --------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection{Bagging Classifier}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Images/confusion_matrix__BaggingClassifier.png}
+    \caption{Matriz de Confusión $-$ Bagging Classifier.}\label{fig:cm_bgc}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+
+    \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+
+    \begin{tabularx}{\textwidth}{|c|R|R|R|R|}
+        \hline
+        \rowcolor{black!10}
+        \textbf{Clase}        & \textbf{Precision}                 & \textbf{Recall} & \textbf{F1-score} & \textbf{Support} \\
+        \hline
+
+        0                     & 0.98                               & 0.99            & 0.98              & 1488             \\ \hline
+        1                     & 0.89                               & 0.92            & 0.90              & 103              \\ \hline
+        2                     & 1.00                               & 1.00            & 1.00              & 18925            \\ \hline
+        3                     & 1.00                               & 1.00            & 1.00              & 861              \\ \hline
+
+        \rowcolor{blue!5}
+        4                     & 1.00                               & 0.67            & 0.80              & 12               \\ \hline
+
+        5                     & 0.91                               & 0.91            & 0.91              & 11               \\ \hline
+        6                     & 1.00                               & 1.00            & 1.00              & 390              \\ \hline
+        7                     & 1.00                               & 1.00            & 1.00              & 178              \\ \hline
+
+        \rowcolor{blue!5}
+        8                     & 0.98                               & 0.97            & 0.97              & 519              \\ \hline
+
+        9                     & 1.00                               & 1.00            & 1.00              & 411              \\ \hline
+        10                    & 0.99                               & 0.98            & 0.99              & 1672             \\ \hline
+
+        \rowcolor{blue!5}
+        11                    & 0.98                               & 0.94            & 0.96              & 54               \\ \hline
+
+        \rowcolor{black!5}
+        \textbf{Accuracy}     & \multicolumn{4}{c|}{\textbf{1.00}}                                                          \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Macro avg}    & 0.98                               & 0.95            & 0.96              & 24624            \\ \hline
+
+        \rowcolor{black!10}
+        \textbf{Weighted avg} & 1.00                               & 1.00            & 1.00              & 24624            \\ \hline
+
+    \end{tabularx}
+
+    \caption{Reporte de Clasificación — Bagging Classifier}
+\end{table}
+
+\subsection{Comparación de modelos}
+
+Al analizar los resultados, se observa una paridad técnica notable: los cuatro
+modelos lograron una exactitud global del 100\% (redondeada) y un F1-Score
+ponderado perfecto. Esto indica que las características extraídas del tráfico
+de red son altamente discriminantes y que el preprocesamiento fue exitoso.
+
+Sin embargo, el \textbf{Extra Trees Classifier} se posiciona como el modelo
+superior por su eficiencia. Logró métricas idénticas a sus competidores pero
+con un tiempo de entrenamiento significativamente menor (3.61s frente a los
+12.24s de Random Forest). En un entorno de producción, donde el reentrenamiento
+periódico puede ser necesario, esta velocidad es una ventaja crítica.
+
+\subsection{Evaluación respecto al objetivo del negocio}
+
+Retomando los objetivos planteados al inicio del proyecto:
+
+\begin{itemize}
+    \item \textbf{¿El modelo detecta ataques adecuadamente?} Sí. La preocupación principal eran las clases minoritarias (como \texttt{Metasploit\_Brute\_Force\_SSH}, Clase 4). El modelo logró un Recall aceptable (0.67) y una Precisión perfecta (1.00) para esta clase crítica, lo que significa que cuando alerta sobre este ataque, es casi seguro que es real (cero falsos positivos).
+    \item \textbf{¿Es lo suficientemente eficiente para IoT?} El modelo seleccionado (Extra Trees) es ligero y rápido. Su naturaleza de árbol permite una inferencia en tiempo real con latencia mínima, apta para gateways IoT o servidores de borde (Edge Computing).
+    \item \textbf{¿Es aplicable en un entorno real?} Los resultados sugieren una alta aplicabilidad. No obstante, el rendimiento perfecto (1.00) invita a la cautela; en un despliegue real, se recomendaría monitorear posibles desviaciones (\textit{drift}) del tráfico respecto al entorno controlado del testbed.
+\end{itemize}

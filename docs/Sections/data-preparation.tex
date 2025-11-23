@@ -1,0 +1,94 @@
+\section{Preparación de los Datos}
+
+La calidad de los datos es un factor determinante en el rendimiento de los
+modelos de aprendizaje automático. En esta etapa, se transformaron los datos
+crudos analizados previamente en un formato óptimo para el entrenamiento,
+abordando problemas de dimensionalidad, formato y desbalance de clases.
+
+\subsection{Selección de atributos}
+
+Basado en el análisis de correlación realizado en la fase exploratoria, se
+identificó una fuerte multicolinealidad entre varias características numéricas.
+La presencia de variables altamente correlacionadas (coeficiente $> 0.95$) no
+aporta información nueva y puede aumentar el costo computacional
+innecesariamente.
+
+Se implementó un algoritmo iterativo para identificar y eliminar estas
+características redundantes, conservando solo una variable representativa de
+cada grupo correlacionado. Adicionalmente, se eliminaron identificadores únicos
+(como columnas de ID) que no poseen valor predictivo para la generalización del
+modelo.
+
+\vfill{}\break{}
+
+\begin{lstlisting}[language=Python, caption=Algoritmo de eliminación de características altamente correlacionadas.]
+highly_correlated: Set[str] = set()
+for i in range(len(corr_matrix.columns)):
+    for j in range(i + 1, len(corr_matrix.columns)):
+        if cast(float, corr_matrix.iat[i, j]) > 0.95:
+            colname = corr_matrix.columns[j]
+            highly_correlated.add(colname)
+
+df_train_raw = df_train.drop(list(highly_correlated)).to_pandas()
+\end{lstlisting}
+
+\subsection{Limpieza de datos}
+
+Se realizó una verificación de integridad en los conjuntos de datos de
+entrenamiento y prueba. Dado que el dataset RT-IoT2022 es un conjunto curado
+académicamente, no se encontraron valores nulos significativos que requirieran
+imputación. Sin embargo, se aplicaron filtros mediante expresiones regulares
+para asegurar que columnas auxiliares de metadatos no interfirieran en el
+proceso de aprendizaje.
+
+\subsection{Ingeniería de características}
+
+La mayoría de los algoritmos de Machine Learning requieren entradas numéricas.
+Por lo tanto, las variables categóricas (como el tipo de protocolo o servicio)
+fueron transformadas utilizando la técnica de \textit{Label Encoding}, que
+asigna un número entero único a cada categoría.
+
+\begin{lstlisting}[language=Python, caption=Codificación de variables categóricas.]
+le = LabelEncoder()
+X_encoded = X_raw.copy()
+for column in X_encoded.select_dtypes(include="object").columns:
+    X_encoded[column] = le.fit_transform(X_encoded[column])
+\end{lstlisting}
+
+Posteriormente, se abordó el problema crítico del desbalance de clases
+detectado en el EDA.\@{}La clase mayoritaria dominaba significativamente sobre
+los ataques específicos, lo que podría sesgar el modelo. Para mitigar esto, se
+diseñó una estrategia híbrida de re-muestreo utilizando un \textit{Pipeline}:
+
+\begin{enumerate}
+    \item \textbf{Undersampling:} Se redujo la clase mayoritaria a un umbral controlado ($N$) utilizando \texttt{RandomUnderSampler}.
+    \item \textbf{Oversampling (SMOTE):} Se generaron muestras sintéticas para las clases minoritarias hasta alcanzar el mismo umbral $N$, utilizando la técnica \textit{Synthetic Minority Over-sampling Technique}.
+\end{enumerate}
+
+Esta estrategia garantiza que el modelo entrene con un conjunto de datos
+perfectamente equilibrado sin perder la representatividad de la clase normal.
+
+\begin{lstlisting}[language=Python, caption=Pipeline de balanceo híbrido (Undersampling + SMOTE).]
+# Estrategia: Bajar la clase mayoritaria y subir las minoritarias
+under_strategy = {major_class_id: TARGET_N}
+under = RandomUnderSampler(sampling_strategy=under_strategy)
+over = SMOTE(sampling_strategy='auto', k_neighbors=3)
+
+pipeline = Pipeline(steps=[("under", under), ("over", over)])
+X_resampled, y_resampled = pipeline.fit_resample(X_encoded, y_encoded)
+\end{lstlisting}
+
+\subsection{División del dataset}
+
+El conjunto de datos original se distribuye particionado en archivos de
+entrenamiento (\texttt{train\_data.csv}) y prueba (\texttt{test\_data.csv}). Si
+bien se respetó esta estructura base, debido al volumen masivo de registros en
+el archivo de prueba dedicado, se optó por utilizar un subconjunto
+representativo del mismo para la fase de evaluación final.
+
+Específicamente, se seleccionó el 30\% de los registros del archivo de prueba
+original para constituir el conjunto de Test definitivo. Esta proporción se
+alinea con las prácticas estándar de la industria (divisiones 70/30 u 80/20),
+permitiendo una evaluación computacionalmente eficiente sin comprometer la
+significancia estadística de las métricas de rendimiento obtenidas.
+
